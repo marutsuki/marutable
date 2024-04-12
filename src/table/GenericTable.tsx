@@ -21,32 +21,33 @@ export type GenericTableProps<T> = {
     }[];
     headerProps?: React.HTMLProps<HTMLTableRowElement>;
     rowProps?: React.HTMLProps<HTMLTableRowElement>;
+    headerCellProps?: React.HTMLProps<HTMLTableCellElement>;
     cellProps?: React.HTMLProps<HTMLTableCellElement>;
 } & Omit<React.HTMLProps<HTMLTableElement>, "rows" | "columns">;
 
-export default function GenericTable<T>({ activeColumns, columns, rows, className, headerProps = {}, rowProps = {}, cellProps = {}, ...props } : GenericTableProps<T>): ReactNode {
+export default function GenericTable<T>({ activeColumns, columns, rows, className, headerProps = {}, rowProps = {}, headerCellProps = {}, cellProps = {}, ...props } : GenericTableProps<T>): ReactNode {
     const gridTemplateColumns = useMemo(() => activeColumns.map(col => 
         columns[col].fixedWidth || "1fr"
     ).join(" "), [activeColumns, columns]);
 
     const { className: headerClassName, ...otherHeaderProps } = headerProps;
     const { className: rowClassName, ...otherRowProps } = rowProps;
+    const { className: headerCellClassName, ...otherHeaderCellProps } = headerCellProps;
     const { className: cellClassName, ...otherCellProps } = cellProps;
 
-    return <table className={"generic-table ".concat(className || "")} {...props} style={{
-        gridTemplateColumns,
-        gridTemplateRows: "auto",
-    }}>
+    return <table className={"generic-table ".concat(className || "")} {...props}>
         <tr className={"generic-table-header ".concat(headerProps.className || "")} {...otherHeaderProps}>
         {
             activeColumns.map((col, i) => 
                 <th 
                     key={`generic-table-col-${String(col)}`} 
-                    className={`generic-table-col generic-table-col-${String(col)}`}
+                    className={`generic-table-col generic-table-col-${String(col)} ${headerCellClassName}`}
                     style={{
                         gridRow: 0,
-                        gridColumn: i + 1
+                        gridColumn: i + 1,
+                        width: columns[col].fixedWidth || "auto"
                     }}
+                    {...otherHeaderCellProps}
                 >
                     {columns[col].label}
                 </th>
