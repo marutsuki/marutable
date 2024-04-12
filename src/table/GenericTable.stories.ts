@@ -9,7 +9,7 @@ type TableType = {
 }
 
 const meta = {
-  title: 'Example/Page',
+  title: 'GenericTable',
   component: GenericTable<TableType>,
   parameters: {
     layout: 'fullscreen',
@@ -24,15 +24,15 @@ export const Default: Story = {
     activeColumns: ["col1", "col2", "col3"],
     columns: {
       col1: {
-        id: "col1",
+        label: "col1",
         getValue: (val) => val
       },
       col2: {
-        id: "col2",
+        label: "col2",
         getValue: (val) => val
       },
       col3: {
-        id: "col3",
+        label: "col3",
         getValue: (val) => String(val)
       }
     },
@@ -43,6 +43,17 @@ export const Default: Story = {
         },
         col2: {
           value: "value2"
+        },
+        col3: {
+          value: true
+        }
+      },
+      {
+        col1: {
+          value: "value1_2"
+        },
+        col2: {
+          value: "value2_2"
         },
         col3: {
           value: true

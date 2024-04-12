@@ -1,4 +1,5 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC, ReactNode, useMemo } from "react";
+import "./GenericTable.css";
 
 type TestData = {
     "test": string;
@@ -6,8 +7,9 @@ type TestData = {
 }
 
 type Column<K, V> = {
-    id: K;
+    label: ReactNode;
     getValue: (val: V) => ReactNode;
+    fixedWidth?: string;
 };
 
 type Row<K, V> = {
@@ -25,7 +27,25 @@ export type GenericTableProps<T> = {
 };
 
 export default function GenericTable<T>({ activeColumns, columns, rows } : GenericTableProps<T>): ReactNode {
-    return <table>
-        
-    </table>
+    const gridTemplateColumns = useMemo(() => activeColumns.map(col => 
+        columns[col].fixedWidth || "1fr"
+    ).join(" "), [activeColumns, columns]);
+
+    return <div className="generic-table" style={{
+        gridTemplateColumns,
+        gridTemplateRows: "auto",
+    }}>
+        {
+            activeColumns.map(col => 
+                <div key={`generic-table-col-${String(col)}`} className={`generic-table-col generic-table-col-${String(col)}`}>{columns[col].label}</div>
+            )
+        }
+        {
+            rows.map(row => 
+                activeColumns.map(col => <div key={`generic-table-row-${String(row)}-cell-${String(col)}`} className={`generic-table-row-${String(row)}-cell-${String(col)}`}>
+                    { columns[col].getValue(row[col].value) }
+                </div>)
+            )
+        }
+    </div>
 }
