@@ -19,31 +19,57 @@ export type GenericTableProps<T> = {
     rows: {
         [K in keyof T]?: Row<K, T[K]>;
     }[];
-};
+    headerProps?: React.HTMLProps<HTMLTableRowElement>;
+    rowProps?: React.HTMLProps<HTMLTableRowElement>;
+    cellProps?: React.HTMLProps<HTMLTableCellElement>;
+} & Omit<React.HTMLProps<HTMLTableElement>, "rows" | "columns">;
 
-export default function GenericTable<T>({ activeColumns, columns, rows } : GenericTableProps<T>): ReactNode {
+export default function GenericTable<T>({ activeColumns, columns, rows, className, headerProps = {}, rowProps = {}, cellProps = {}, ...props } : GenericTableProps<T>): ReactNode {
     const gridTemplateColumns = useMemo(() => activeColumns.map(col => 
         columns[col].fixedWidth || "1fr"
     ).join(" "), [activeColumns, columns]);
 
-    return <div className="generic-table" style={{
+    const { className: headerClassName, ...otherHeaderProps } = headerProps;
+    const { className: rowClassName, ...otherRowProps } = rowProps;
+    const { className: cellClassName, ...otherCellProps } = cellProps;
+
+    return <table className={"generic-table ".concat(className || "")} {...props} style={{
         gridTemplateColumns,
         gridTemplateRows: "auto",
     }}>
+        <tr className={"generic-table-header ".concat(headerProps.className || "")} {...otherHeaderProps}>
         {
-            activeColumns.map(col => 
-                <div key={`generic-table-col-${String(col)}`} className={`generic-table-col generic-table-col-${String(col)}`}>{columns[col].label}</div>
+            activeColumns.map((col, i) => 
+                <th 
+                    key={`generic-table-col-${String(col)}`} 
+                    className={`generic-table-col generic-table-col-${String(col)}`}
+                    style={{
+                        gridRow: 0,
+                        gridColumn: i + 1
+                    }}
+                >
+                    {columns[col].label}
+                </th>
             )
         }
+        </tr>
         {
-            rows.map(row => 
-                activeColumns.map(col => {
-                    const val = row[col]?.value;
-                    return <div key={`generic-table-row-${String(row)}-cell-${String(col)}`} className={`generic-table-row-${String(row)}-cell-${String(col)}`}>
-                        { val !== undefined && columns[col].getValue(val) }
-                    </div>
-                })
+            rows.map((row, i) => 
+                <tr className={`generic-table-row generic-table-row-${i} ${otherRowProps}`}> 
+                    {
+                        activeColumns.map(col => {
+                            const val = row[col]?.value;
+                            return <td 
+                                key={`generic-table-row-${String(row)}-cell-${String(col)}`} 
+                                className={`generic-table-row-${String(row)}-cell-${String(col)} ${cellClassName || ""}`}
+                                {...otherCellProps}
+                            >
+                                { val !== undefined && columns[col].getValue(val) }
+                            </td>
+                        })
+                    }
+                </tr>
             )
         }
-    </div>
+    </table>
 }
