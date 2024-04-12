@@ -1,12 +1,7 @@
-import React, { FC, ReactNode, useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import "./GenericTable.css";
 
-type TestData = {
-    "test": string;
-    "react": boolean;
-}
-
-type Column<K, V> = {
+type Column<V> = {
     label: ReactNode;
     getValue: (val: V) => ReactNode;
     fixedWidth?: string;
@@ -19,7 +14,7 @@ type Row<K, V> = {
 export type GenericTableProps<T> = {
     activeColumns: (keyof T)[];
     columns: {
-        [K in keyof T]: Column<K, T[K]>;
+        [K in keyof T]: Column<T[K]>;
     },
     rows: {
         [K in keyof T]: Row<K, T[K]>;
