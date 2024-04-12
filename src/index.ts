@@ -1,0 +1,1 @@
+export { default as GenericTable } from "./table/GenericTable";
