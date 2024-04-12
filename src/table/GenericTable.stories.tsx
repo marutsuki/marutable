@@ -9,6 +9,10 @@ type TableType = {
   col2: string;
   col3: boolean;
   img: React.JSX.Element | null;
+  complex: {
+    someValue: number;
+    otherValue: number;
+  }
 }
 
 const meta = {
@@ -24,7 +28,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    activeColumns: ["col1", "col2", "col3", "img"],
+    activeColumns: ["col1", "col2", "col3", "img", "complex"],
     columns: {
       col1: {
         label: "col1",
@@ -41,6 +45,10 @@ export const Default: Story = {
       img: {
         label: "img",
         getValue: (val) => val
+      },
+      complex: {
+        label: "a number",
+        getValue: (val) => val.someValue * val.otherValue
       }
     },
     rows: [
@@ -56,6 +64,81 @@ export const Default: Story = {
         },
         img: {
           value: Smiley
+        },
+        complex: {
+          value: {
+            someValue: 3,
+            otherValue: 10,
+          }
+        }
+      },
+      {
+        col1: {
+          value: "value1_2"
+        },
+        col2: {
+          value: "value2_2"
+        },
+        col3: {
+          value: true
+        },
+        img: {
+          value: null
+        }
+      }
+    ]
+  }
+};
+
+export const FixedWidth: Story = {
+  args: {
+    activeColumns: ["col1", "col2", "col3", "img", "complex"],
+    columns: {
+      col1: {
+        label: "col1",
+        getValue: (val) => val,
+        fixedWidth: "100px",
+      },
+      col2: {
+        label: "col2",
+        getValue: (val) => val,
+        fixedWidth: "100px",
+      },
+      col3: {
+        label: "col3",
+        getValue: (val) => String(val),
+        fixedWidth: "100px",
+      },
+      img: {
+        label: "img",
+        getValue: (val) => val,
+        fixedWidth: "100px",
+      },
+      complex: {
+        label: "a number",
+        getValue: (val) => val.someValue * val.otherValue,
+        fixedWidth: "200px",
+      }
+    },
+    rows: [
+      {
+        col1: {
+          value: "value1"
+        },
+        col2: {
+          value: "value2"
+        },
+        col3: {
+          value: true
+        },
+        img: {
+          value: Smiley
+        },
+        complex: {
+          value: {
+            someValue: 3,
+            otherValue: 10,
+          }
         }
       },
       {

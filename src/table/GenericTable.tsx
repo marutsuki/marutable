@@ -17,7 +17,7 @@ export type GenericTableProps<T> = {
         [K in keyof T]: Column<T[K]>;
     },
     rows: {
-        [K in keyof T]: Row<K, T[K]>;
+        [K in keyof T]?: Row<K, T[K]>;
     }[];
 };
 
@@ -37,9 +37,12 @@ export default function GenericTable<T>({ activeColumns, columns, rows } : Gener
         }
         {
             rows.map(row => 
-                activeColumns.map(col => <div key={`generic-table-row-${String(row)}-cell-${String(col)}`} className={`generic-table-row-${String(row)}-cell-${String(col)}`}>
-                    { columns[col].getValue(row[col].value) }
-                </div>)
+                activeColumns.map(col => {
+                    const val = row[col]?.value;
+                    return <div key={`generic-table-row-${String(row)}-cell-${String(col)}`} className={`generic-table-row-${String(row)}-cell-${String(col)}`}>
+                        { val !== undefined && columns[col].getValue(val) }
+                    </div>
+                })
             )
         }
     </div>
