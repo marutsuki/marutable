@@ -1,5 +1,5 @@
 import React, { ReactNode, useMemo, useState } from "react";
-import GenericTable, { Cell, Column, GenericTableProps } from "../table/GenericTable";
+import GenericTable, { Cell, Column, GenericTableProps, TableKeyValueMap } from "../table/GenericTable";
 import { SortOrder, sorted } from "../util/sort-utils";
 import { getInnerText } from "../util/react-utils";
 
@@ -23,7 +23,7 @@ interface SortableColumn<V> extends Column<V> {
     sortOnClick?: boolean;
 }
 
-export type SortableTableProps<T> = GenericTableProps<T> & {
+export type SortableTableProps<T extends TableKeyValueMap> = GenericTableProps<T> & {
     columns: {
         [K in keyof T]: SortableColumn<T[K]>;
     },
@@ -37,7 +37,7 @@ export type SortableTableProps<T> = GenericTableProps<T> & {
     sortIconProvider?: (props: { sortOrder: SortOrder } & JSX.IntrinsicAttributes) => ReactNode;
 }
 
-export default function SortableTable<T>({ 
+export default function SortableTable<T extends TableKeyValueMap>({ 
     rows,
     columns,
     onHeaderSelected,
@@ -79,16 +79,17 @@ export default function SortableTable<T>({
             return rows;
         }
         const [sortColumn, sortOrder] = toSort;
+        const ssortColumn = String(sortColumn);
         if (columns[sortColumn].sortable === false) {
             return rows;
         }
         return sorted(rows, (a, b) => {
-            const aVal = a[sortColumn]?.value;
-            const bVal = b[sortColumn]?.value;
+            const aVal = a[ssortColumn]?.value;
+            const bVal = b[ssortColumn]?.value;
             if (aVal === undefined) {
                 return -1;
             }
-            if (bVal === undefined || bVal === null || Object.keys(bVal).length === 0) {
+            if (bVal === undefined) {
                 return 1;
             }
             return getInnerText(columns[sortColumn].getValue(aVal)).localeCompare(getInnerText(columns[sortColumn].getValue(bVal)), 'en', { numeric });

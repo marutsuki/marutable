@@ -1,6 +1,8 @@
 import React, { MouseEvent, ReactNode } from "react";
 import "./GenericTable.css";
 
+export type TableKeyValueMap = Record<string, any>;
+
 export interface Column<V> {
     label: ReactNode;
     getValue: (val: V) => ReactNode;
@@ -31,7 +33,7 @@ export type GenericTableProps<T> = {
     sortable?: boolean;
 } & Omit<React.HTMLProps<HTMLTableElement>, "rows" | "columns">;
 
-export default function GenericTable<T>({ 
+export default function GenericTable<T extends TableKeyValueMap>({ 
     activeColumns, 
     columns, 
     rows, 
