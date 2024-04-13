@@ -91,14 +91,16 @@ export default function GenericTable<T>({
         }
         </tr>
         {
-            rows.map((row, i) => 
-                <tr className={`generic-table-row generic-table-row-${i} ${otherRowProps} ${rowClassName}`}> 
+            rows.map((row, i) => {
+                const key = `generic-table-row-${i}`;
+                return <tr className={`generic-table-row generic-table-row-${i} ${rowClassName || ""}`} {...otherRowProps}> 
                     {
                         activeColumns.map(col => {
                             const val = row[col]?.value;
+                            const subKey = key.concat(`-cell-${String(col)}`);
                             return <td 
-                                key={`generic-table-row-${String(row)}-cell-${String(col)}`} 
-                                className={`generic-table-row-${String(row)}-cell-${String(col)} ${cellClassName || ""}`}
+                                key={subKey} 
+                                className={`${subKey} ${cellClassName || ""}`}
                                 onClick={(e) => onCellSelectedWrapper(e, i, col)}
                                 {...otherCellProps}
                             >
@@ -107,7 +109,7 @@ export default function GenericTable<T>({
                         })
                     }
                 </tr>
-            )
+            })
         }
     </table>
 }

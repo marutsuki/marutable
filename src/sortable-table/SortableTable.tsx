@@ -72,9 +72,7 @@ export default function SortableTable<T>({
     }), [columns, sortColumns]);
 
     const sortedRows = useMemo(() => {
-        console.log(sortColumns)
         const toSort = Object.entries(sortColumns).find(col => col[1] !== SortOrder.Unordered) as [keyof typeof columns, SortOrder];
-        console.log('got here')
         if (toSort === undefined) {
             return rows;
         }
