@@ -2,6 +2,7 @@ import React from "react";
 import type { Meta, StoryObj } from '@storybook/react';
 import SortableTable, { SortableTableProps } from "./SortableTable";
 import { SortOrder } from "../util/sort-utils";
+import "./SortableTable.stories.css";
 
 type TableType = {
   col1: string;
@@ -133,6 +134,7 @@ export const DefaultSorted: Story = {
     ...commonProps,
     defaultSort: SortOrder.Ascending,
     defaultSortColumn: "col1",
+    sortOnHeaderClick: false,
     columns: {
       ...commonProps.columns,
       col1: {
@@ -143,17 +145,53 @@ export const DefaultSorted: Story = {
   }
 };
 
+const CustomSortIcon = ({ sortOrder }: { sortOrder: SortOrder }) => <svg
+  style={{
+      ...(sortOrder === SortOrder.Unordered && { opacity: "0%" }),
+      padding: "0px 5px",
+      rotate: sortOrder === SortOrder.Ascending ? "0deg" : "180deg"
+  }}
+  xmlns="http://www.w3.org/2000/svg" 
+  width="16" 
+  height="16" 
+  viewBox="0 0 24 24"
+  fill="white"
+  >
+  <path d="M24 3l-12 18-12-18z"/>
+</svg>;
+
 export const ClickableHeaders: Story = {
   args: {
     ...commonProps,
-    defaultSort: SortOrder.Ascending,
-    defaultSortColumn: "col1",
+    headerCellProps: {
+      className: "sort-header"
+    },
+    sortOnHeaderClick: true,
+    sortIconProvider: CustomSortIcon
+  }
+};
+
+export const OnlySomeColumnsSortable: Story = {
+  args: {
+    ...commonProps,
+    headerCellProps: {
+      className: "sort-header"
+    },
+    sortOnHeaderClick: true,
+    sortIconProvider: CustomSortIcon,
     columns: {
       ...commonProps.columns,
       col1: {
-        label: "sorted",
+        label: "Not sortable",
+        sortable: false,
         getValue: (val) => val
+      },
+      col3: {
+        label: "Not sortable",
+        sortable: false,
+        getValue: (val) => String(val)
       }
-    },
+
+    }
   }
 };

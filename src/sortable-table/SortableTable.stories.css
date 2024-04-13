@@ -1,0 +1,17 @@
+.sort-header {
+    color: white;
+    padding: 2px;
+    cursor: pointer;
+    background: rgba(75, 75, 100, 1);
+    border: black 3px solid;
+    transition: 0.1s;
+    user-select: none;
+}
+
+.sort-header:hover {
+    background:rgba(100, 100, 160, 1);
+}
+
+.sort-header:active {
+    background:rgba(100, 150, 255, 1);
+}

@@ -3,7 +3,7 @@ import GenericTable, { Cell, Column, GenericTableProps } from "../table/GenericT
 import { SortOrder, sorted } from "../util/sort-utils";
 import { getInnerText } from "../util/react-utils";
 
-const SortIcon = ({ sortOrder }: { sortOrder: SortOrder }) => 
+const DefaultSortIcon = ({ sortOrder }: { sortOrder: SortOrder }) => 
     <svg
         style={{
             ...(sortOrder === SortOrder.Unordered && { opacity: "0%" }),
@@ -34,6 +34,7 @@ export type SortableTableProps<T> = GenericTableProps<T> & {
     defaultSortColumn?: keyof T;
     numericSort?: boolean;
     sortOnHeaderClick?: boolean;
+    sortIconProvider?: (props: { sortOrder: SortOrder } & JSX.IntrinsicAttributes) => ReactNode;
 }
 
 export default function SortableTable<T>({ 
@@ -44,6 +45,7 @@ export default function SortableTable<T>({
     defaultSortColumn,
     numericSort: numeric = false,
     sortOnHeaderClick = true,
+    sortIconProvider = DefaultSortIcon,
     ...props 
 } : SortableTableProps<T>): ReactNode {
     const [sortColumns, setSortColumns] = useState<Record<keyof T, SortOrder>>(Object.keys(columns).reduce((prev, col) => ({
@@ -62,7 +64,7 @@ export default function SortableTable<T>({
                         original.label
                     } 
                     {
-                        <SortIcon sortOrder={sortColumns[col as keyof typeof columns]}/>
+                        (original.sortable === undefined || original.sortable === true) && sortIconProvider({ sortOrder: sortColumns[col as keyof typeof columns] })
                     }
                 </>
             }
@@ -77,6 +79,9 @@ export default function SortableTable<T>({
             return rows;
         }
         const [sortColumn, sortOrder] = toSort;
+        if (columns[sortColumn].sortable === false) {
+            return rows;
+        }
         return sorted(rows, (a, b) => {
             const aVal = a[sortColumn]?.value;
             const bVal = b[sortColumn]?.value;
