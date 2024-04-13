@@ -1,7 +1,7 @@
 import React, { MouseEvent, ReactNode } from "react";
 import "./GenericTable.css";
 
-type Column<V> = {
+export interface Column<V> {
     label: ReactNode;
     getValue: (val: V) => ReactNode;
     fixedWidth?: string;
@@ -9,7 +9,7 @@ type Column<V> = {
     className?: string;
 };
 
-type Cell<V> = {
+export type Cell<V> = {
     value: V;
     onCellSelected?: (e: MouseEvent) => void;
 }
@@ -26,8 +26,9 @@ export type GenericTableProps<T> = {
     rowProps?: React.HTMLProps<HTMLTableRowElement>;
     headerCellProps?: React.HTMLProps<HTMLTableCellElement>;
     cellProps?: React.HTMLProps<HTMLTableCellElement>;
-    onHeaderSelected?: (colNo: number, colId?: keyof T, label?: ReactNode) => void;
-    onCellSelected?: (rowNo: number, colId: keyof T, value?: T[keyof T], e?: MouseEvent) => void;
+    onHeaderSelected?: (colNo: number, colId: keyof T, label: ReactNode) => void;
+    onCellSelected?: (rowNo: number, colId: keyof T, e: MouseEvent, value?: T[keyof T]) => void;
+    sortable?: boolean;
 } & Omit<React.HTMLProps<HTMLTableElement>, "rows" | "columns">;
 
 export default function GenericTable<T>({ 
@@ -41,6 +42,7 @@ export default function GenericTable<T>({
     cellProps = {}, 
     onHeaderSelected,
     onCellSelected,
+    sortable = true,
     ...props 
 } : GenericTableProps<T>): ReactNode {
     const { className: headerClassName, ...otherHeaderProps } = headerProps;
@@ -64,9 +66,10 @@ export default function GenericTable<T>({
             cellCallback(e);
         }
         if (onCellSelected !== undefined) {
-            onCellSelected(rowNo, colId, rows[rowNo][colId]?.value, e);
+            onCellSelected(rowNo, colId, e, rows[rowNo][colId]?.value);
         }
     }
+
     return <table className={"generic-table ".concat(className || "")} {...props}>
         <tr className={"generic-table-header ".concat(headerProps.className || "")} {...otherHeaderProps}>
         {

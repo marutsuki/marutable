@@ -82,7 +82,7 @@ const commonProps: GenericTableProps<TableType> = {
 export const AllCellsSelectable: Story = {
   args: {
     ...commonProps,
-    onCellSelected: (rowNo, colId, value) => alert(`Cell selected:\n rowNo: ${rowNo}\n colId: ${colId}\n value: ${JSON.stringify(value)}`),
+    onCellSelected: (rowNo, colId, _, value) => alert(`Cell selected:\n rowNo: ${rowNo}\n colId: ${colId}\n value: ${JSON.stringify(value)}`),
   }
 };
 
