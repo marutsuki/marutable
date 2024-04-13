@@ -56,7 +56,7 @@ export default function GenericTable<T>({ activeColumns, columns, rows, classNam
         </tr>
         {
             rows.map((row, i) => 
-                <tr className={`generic-table-row generic-table-row-${i} ${otherRowProps}`}> 
+                <tr className={`generic-table-row generic-table-row-${i} ${otherRowProps} ${rowClassName}`}> 
                     {
                         activeColumns.map(col => {
                             const val = row[col]?.value;
